@@ -7,28 +7,35 @@
     </form>
     <div class="hero-body">
       <div class="image-container">
-        <div v-for="result in results" class="image-card">
+        <div v-for="result in results" class="image-card" @click="openImage(result.largeImageURL)">
           <img v-bind:src="result.largeImageURL" alt="pixable image" class="image-data">
         </div>
       </div>
     </div>
+    <ModalComponent v-bind:url="selectedUrl" v-if="showModal" @close="showModal = false" />
   </div>
 </template>
 
 <script>
 
 import axios from 'axios';
+import ModalComponent from './ModalComponent';
 
 const apiUrl = 'https://pixabay.com/api'
 const apiKey =  '8653965-67fc8570b61c58e735d9adade'
 
 export default {
   name: 'SearchImageComponent',
+  components: {
+    ModalComponent
+  },
   data() {
     return {
       query: "",
       results: [],
-      animate: false
+      animate: false,
+      selectedUrl: '',
+      showModal: false
     }
   },
   methods: {
@@ -44,6 +51,11 @@ export default {
         .catch (err => {
           console.error(err);
         })
+    },
+
+    openImage(url) {
+      this.selectedUrl = url;
+      this.showModal = true;
     }
   }
 }
