@@ -25,6 +25,12 @@
       "@vue/app"
     ]
   },
+  "eslintConfig": {
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ]
+  },
   "postcss": {
     "plugins": {
       "autoprefixer": {}
