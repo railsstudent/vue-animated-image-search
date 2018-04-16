@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div class="hero is-fullheight is-bold is-link" id="app">
     <SearchImageComponent />
   </div>
 </template>
@@ -22,7 +22,5 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
 }
 </style>

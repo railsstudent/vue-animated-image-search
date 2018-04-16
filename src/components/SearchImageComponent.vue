@@ -1,6 +1,6 @@
 <template>
   <div>
-    <form id="search-form">
+    <form id="search-form" v-bind:class="{ 'animate-height' : animate }">
       <input type="text" class="input is-medium"
         placeholder="What images would you like to see on Pixabay?" v-model="query">
       <button type="submit" class="button is-link is-medium" @click.prevent="search">Search</button>
@@ -8,7 +8,7 @@
     <div class="hero-body">
       <div class="image-container">
         <div v-for="result in results" class="image-card">
-          <img :src="result.largeImageURL" alt="pixable image" class="image-data">
+          <img v-bind:src="result.largeImageURL" alt="pixable image" class="image-data">
         </div>
       </div>
     </div>
@@ -27,7 +27,8 @@ export default {
   data() {
     return {
       query: "",
-      results: []
+      results: [],
+      animate: false
     }
   },
   methods: {
@@ -38,7 +39,7 @@ export default {
         .then(response => {
           const { hits, totalHits } = response.data;
           this.results = (totalHits > 0) ? hits : [];
-          console.log(totalHits, this.results);
+          this.animate = true;
         })
         .catch (err => {
           console.error(err);
@@ -57,6 +58,7 @@ export default {
     min-height: 80px;
 
     height: 100vh;
+    max-height: 100vh;
     display: flex;
     align-items: center;
 
@@ -79,5 +81,11 @@ export default {
       width: 100%;
       height: auto;
     }
+  }
+
+  #search-form.animate-height {
+    transition: max-height 10s;
+    transition-timing-function: ease;
+    max-height: 0;
   }
 </style>
