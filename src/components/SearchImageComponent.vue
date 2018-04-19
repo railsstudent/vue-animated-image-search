@@ -1,15 +1,16 @@
 <template>
   <div>
-    <form id="search-form" v-bind:class="{ 'animate-height' : animate }">
+    <form id="search-form" v-bind:class="{ 'animate-height' : results }">
       <input type="text" class="input is-medium"
         placeholder="What images would you like to see on Pixabay?" v-model="query">
-      <button type="submit" class="button is-link is-medium" @click.prevent="search">Search</button>
+      <button type="submit" class="button is-link is-medium" @click.prevent="search" :disabled="searching">Search</button>
     </form>
     <div class="hero-body">
-      <div class="image-container">
+      <div class="image-container" v-if="results">
         <div v-for="result in results" class="image-card" @click="openImage(result.largeImageURL)">
           <img v-bind:src="result.largeImageURL" alt="pixable image" class="image-data">
         </div>
+        <h3 class="title has-text-centered is-1" v-if="!results.length">😖 No results found!</h3>
       </div>
     </div>
     <ModalComponent v-bind:url="selectedUrl" v-if="showModal" @close="showModal = false" />
@@ -21,9 +22,6 @@
 import axios from 'axios';
 import ModalComponent from './ModalComponent';
 
-const apiUrl = 'https://pixabay.com/api'
-const apiKey =  '8653965-67fc8570b61c58e735d9adade'
-
 export default {
   name: 'SearchImageComponent',
   components: {
@@ -31,25 +29,32 @@ export default {
   },
   data() {
     return {
+      apiUrl: 'https://pixabay.com/api',
+      apiKey: '8653965-67fc8570b61c58e735d9adade',
       query: "",
-      results: [],
-      animate: false,
+      results: null,
+      searching: false,
       selectedUrl: '',
       showModal: false
     }
   },
   methods: {
     search() {
-      const requestUrl = `${apiUrl}/?key=${apiKey}&q=${this.query}s&image_type=photo&per_page=15&safesearch=true`;
-
+      if (this.searching) {
+        return;
+      }
+      const encodedQuery = encodeURIComponent(this.query);
+      const requestUrl = `${this.apiUrl}/?key=${this.apiKey}&q=${encodedQuery}s&image_type=photo&per_page=15&safesearch=true`;
+      this.searching = true;
       axios.get(requestUrl)
         .then(response => {
           const { hits, totalHits } = response.data;
           this.results = (totalHits > 0) ? hits : [];
-          this.animate = true;
+          this.searching = false;
         })
         .catch (err => {
           console.error(err);
+          this.searching = false;
         })
     },
 
